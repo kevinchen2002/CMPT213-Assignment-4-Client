@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The main UI class
@@ -264,13 +267,32 @@ public class SwingUI implements ActionListener {
             addConsumable();
             dummy();
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
-            //removeConsumable();
-            JOptionPane.showMessageDialog(applicationFrame, "CMPT213 A3 Consumables Tracker", "Info", JOptionPane.INFORMATION_MESSAGE);
+            removeConsumable();
         }
     }
 
     private void dummy() {
-        Consumable dummy = ConsumableManager.deserializeConsumable("{\"weight\":1.0,\"name\":\"Food\",\"notes\":\"This is a food!\",\"price\":1.0,\"expDate\":\"2021-11-25T01:30\",\"daysUntilExp\":-1,\"isExpired\":true,\"type\":\"food\",\"uuid\":\"93896c59-e419-4bf0-aa7a-73be212160f7\"}");
-        consumableManager.addConsumable(dummy);
+//        Consumable dummy = ConsumableManager.deserializeConsumable("{\"weight\":1.0,\"name\":\"Food\",\"notes\":\"This is a food!\",\"price\":1.0,\"expDate\":\"2021-11-25T01:30\",\"daysUntilExp\":-1,\"isExpired\":true,\"type\":\"food\",\"uuid\":\"93896c59-e419-4bf0-aa7a-73be212160f7\"}");
+//        consumableManager.addConsumable(dummy);
+        //String command = "curl -i -H \"Content-Type: application/json\" -X GET localhost:8080/getFirst";
+        String command = "curl -X GET localhost:8080/getFirst";
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            InputStream is = process.getInputStream();
+            String serialized = getStringFromInputStream(is);
+            displayPane.setText(serialized);
+            Consumable consumable = ConsumableManager.deserializeConsumable(serialized);
+            consumableManager.addConsumable(consumable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Used https://www.baeldung.com/convert-input-stream-to-string as reference
+    public String getStringFromInputStream(InputStream is) {
+        return new BufferedReader(
+                new InputStreamReader(is, StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining("\n"));
     }
 }

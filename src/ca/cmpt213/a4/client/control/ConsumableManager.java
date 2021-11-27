@@ -177,6 +177,9 @@ public class ConsumableManager {
                 }
             }).registerTypeAdapterFactory(runTimeTypeAdapterFactory).create();
 
+    public static String serializeConsumable(Consumable consumable) {
+        return myGson.toJson(consumable);
+    }
 
     public static Consumable deserializeConsumable(String gsonString) {
         Consumable deserialized = myGson.fromJson(gsonString, new TypeToken<Consumable>() {
