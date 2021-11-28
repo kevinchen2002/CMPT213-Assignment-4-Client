@@ -11,8 +11,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Creates and displays a custom dialog which prompts the users to enter information to add a Consumable
@@ -217,6 +223,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
                 return;
             }
             Consumable newConsumable = ConsumableFactory.getInstance(isFood, name, notes, price, weightOrVolume, expDate);
+            //curlWithBody("POST", "addFood", newConsumable);
             consumableManager.addConsumable(newConsumable);
             dispose();
         } catch (Exception e) {
@@ -309,5 +316,32 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
     @Override
     public void dateOrTimeChanged(DateTimeChangeEvent event) {
         expDate = dateTimePicker.getDateTimePermissive();
+    }
+
+    private String curlWithBody(String method, String operation, Consumable consumable) {
+        String consumableString = ConsumableManager.serializeConsumable(consumable);
+        consumableString.replaceAll("\"", "\\\\");
+        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
+        System.out.println(command);
+        return executeCommand(command);
+    }
+
+    private String executeCommand(String command) {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        InputStream inputStream = process.getInputStream();
+        return getStringFromInputStream(inputStream);
+    }
+
+    //Used https://www.baeldung.com/convert-input-stream-to-string as reference
+    public String getStringFromInputStream(InputStream is) {
+        return new BufferedReader(
+                new InputStreamReader(is, StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining("\n"));
     }
 }

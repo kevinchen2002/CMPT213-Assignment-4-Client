@@ -265,7 +265,7 @@ public class SwingUI implements ActionListener {
             updateView();
         } else if (Objects.equals(e.getActionCommand(), "Add")) {
             addConsumable();
-            displayPane.setText(curlWithBody("POST", "addFood", consumableManager.getAllConsumables().get(0)));
+            displayPane.setText(curlWithBody("POST", "/addFood", consumableManager.getAllConsumables().get(0)));
             //curlWithBody("POST", "addFood", consumableManager.getAllConsumables().get(0));
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
             removeConsumable();
@@ -280,7 +280,7 @@ public class SwingUI implements ActionListener {
 
     private String curlWithBody(String method, String operation, Consumable consumable) {
         String consumableString = ConsumableManager.serializeConsumable(consumable);
-        consumableString.replaceAll("\"", "\\\\");
+        consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
         String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
         System.out.println(command);
         return executeCommand(command);
