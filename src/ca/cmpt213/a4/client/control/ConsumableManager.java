@@ -52,6 +52,10 @@ public class ConsumableManager {
         Collections.sort(consumableList);
     }
 
+    public ArrayList<Consumable> getAllConsumables() {
+        return consumableList;
+    }
+
     /**
      * Returns the size of the underlying Consumable list
      * @return the size as an integer

@@ -265,27 +265,36 @@ public class SwingUI implements ActionListener {
             updateView();
         } else if (Objects.equals(e.getActionCommand(), "Add")) {
             addConsumable();
-            dummy();
+            displayPane.setText(curlWithBody("POST", "addFood", consumableManager.getAllConsumables().get(0)));
+            //curlWithBody("POST", "addFood", consumableManager.getAllConsumables().get(0));
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
             removeConsumable();
+            displayPane.setText(curlCommand("GET", "/listAll"));
         }
     }
 
-    private void dummy() {
-//        Consumable dummy = ConsumableManager.deserializeConsumable("{\"weight\":1.0,\"name\":\"Food\",\"notes\":\"This is a food!\",\"price\":1.0,\"expDate\":\"2021-11-25T01:30\",\"daysUntilExp\":-1,\"isExpired\":true,\"type\":\"food\",\"uuid\":\"93896c59-e419-4bf0-aa7a-73be212160f7\"}");
-//        consumableManager.addConsumable(dummy);
-        //String command = "curl -i -H \"Content-Type: application/json\" -X GET localhost:8080/getFirst";
-        String command = "curl -X GET localhost:8080/getFirst";
+    private String curlCommand(String method, String operation) {
+        String command = "curl -X " + method + " localhost:8080" + operation;
+        return executeCommand(command);
+    }
+
+    private String curlWithBody(String method, String operation, Consumable consumable) {
+        String consumableString = ConsumableManager.serializeConsumable(consumable);
+        consumableString.replaceAll("\"", "\\\\");
+        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
+        System.out.println(command);
+        return executeCommand(command);
+    }
+
+    private String executeCommand(String command) {
+        Process process = null;
         try {
-            Process process = Runtime.getRuntime().exec(command);
-            InputStream is = process.getInputStream();
-            String serialized = getStringFromInputStream(is);
-            displayPane.setText(serialized);
-            Consumable consumable = ConsumableManager.deserializeConsumable(serialized);
-            consumableManager.addConsumable(consumable);
-        } catch (Exception e) {
+            process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        InputStream inputStream = process.getInputStream();
+        return getStringFromInputStream(inputStream);
     }
 
     //Used https://www.baeldung.com/convert-input-stream-to-string as reference
