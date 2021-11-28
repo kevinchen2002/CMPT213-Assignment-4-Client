@@ -157,7 +157,11 @@ public class SwingUI implements ActionListener {
      * Displays all expired items on the central pane
      */
     private void viewExpired() {
-        displayPane.setText(consumableManager.getExpiredString());
+//        displayPane.setText(consumableManager.getExpiredString());
+//        displayPane.setCaretPosition(0);
+        String consumablesString = curlCommand("GET", "/listExpired");
+        ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
 
@@ -165,7 +169,11 @@ public class SwingUI implements ActionListener {
      * Displays all unexpired items on the central pane
      */
     private void viewNotExpired() {
-        displayPane.setText(consumableManager.getNotExpiredString());
+//        displayPane.setText(consumableManager.getNotExpiredString());
+//        displayPane.setCaretPosition(0);
+        String consumablesString = curlCommand("GET", "/listNonExpired");
+        ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
 
@@ -173,7 +181,11 @@ public class SwingUI implements ActionListener {
      * Displays all items expiring within seven days on the central pane
      */
     private void viewExpiringSevenDays() {
-        displayPane.setText(consumableManager.getExpiringSevenDaysString());
+//        displayPane.setText(consumableManager.getExpiringSevenDaysString());
+//        displayPane.setCaretPosition(0);
+        String consumablesString = curlCommand("GET", "/listExpiringIn7Days");
+        ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
 
@@ -272,7 +284,6 @@ public class SwingUI implements ActionListener {
             addConsumable();
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
             removeConsumable();
-            displayPane.setText(curlCommand("GET", "/listAll"));
         }
     }
 
