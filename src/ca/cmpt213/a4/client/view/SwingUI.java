@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -144,7 +145,11 @@ public class SwingUI implements ActionListener {
      * Displays all items on the central pane
      */
     private void viewAllConsumables() {
-        displayPane.setText(consumableManager.getAllConsumablesString());
+//        displayPane.setText(consumableManager.getAllConsumablesString());
+//        displayPane.setCaretPosition(0);
+        String consumablesString = curlCommand("GET", "/listAll");
+        ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
 
@@ -265,8 +270,6 @@ public class SwingUI implements ActionListener {
             updateView();
         } else if (Objects.equals(e.getActionCommand(), "Add")) {
             addConsumable();
-            displayPane.setText(curlWithBody("POST", "/addFood", consumableManager.getAllConsumables().get(0)));
-            //curlWithBody("POST", "addFood", consumableManager.getAllConsumables().get(0));
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
             removeConsumable();
             displayPane.setText(curlCommand("GET", "/listAll"));
@@ -275,14 +278,6 @@ public class SwingUI implements ActionListener {
 
     private String curlCommand(String method, String operation) {
         String command = "curl -X " + method + " localhost:8080" + operation;
-        return executeCommand(command);
-    }
-
-    private String curlWithBody(String method, String operation, Consumable consumable) {
-        String consumableString = ConsumableManager.serializeConsumable(consumable);
-        consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
-        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
-        System.out.println(command);
         return executeCommand(command);
     }
 

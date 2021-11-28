@@ -223,7 +223,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
                 return;
             }
             Consumable newConsumable = ConsumableFactory.getInstance(isFood, name, notes, price, weightOrVolume, expDate);
-            //curlWithBody("POST", "addFood", newConsumable);
+            curlWithBody("POST", "/addConsumable", newConsumable);
             consumableManager.addConsumable(newConsumable);
             dispose();
         } catch (Exception e) {
@@ -320,7 +320,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
 
     private String curlWithBody(String method, String operation, Consumable consumable) {
         String consumableString = ConsumableManager.serializeConsumable(consumable);
-        consumableString.replaceAll("\"", "\\\\");
+        consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
         String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
         System.out.println(command);
         return executeCommand(command);

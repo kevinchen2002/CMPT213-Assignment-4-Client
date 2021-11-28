@@ -88,6 +88,18 @@ public class ConsumableManager {
         return bigString.toString();
     }
 
+    public static String listToString(ArrayList<Consumable> list) {
+        if (list.isEmpty()) {
+            return "There are no consumable items!";
+        }
+        StringBuilder bigString = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            String consumableString = "No. " + (i+1) + "\n" + list.get(i);
+            bigString.append(consumableString).append("\n\n");
+        }
+        return bigString.toString();
+    }
+
     /**
      * Returns a string representing all expired Consumables
      * @return said string
@@ -194,6 +206,22 @@ public class ConsumableManager {
             deserialized.setType("drink");
         }
         return deserialized;
+    }
+
+    public static String serializeConsumableList(ArrayList<Consumable> consumableList) {
+        return myGson.toJson(consumableList);
+    }
+
+    public static ArrayList<Consumable> deserializeConsumableList(String gsonString) {
+        consumableList = myGson.fromJson(gsonString, new TypeToken<ArrayList<Consumable>>() {}.getType());
+        for (Consumable consumable : consumableList) {
+            if (consumable instanceof FoodItem) {
+                consumable.setType("food");
+            } else if (consumable instanceof DrinkItem) {
+                consumable.setType("drink");
+            }
+        }
+        return consumableList;
     }
 
     /**
