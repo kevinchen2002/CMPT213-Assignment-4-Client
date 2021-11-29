@@ -145,10 +145,9 @@ public class SwingUI implements ActionListener {
      * Displays all items on the central pane
      */
     private void viewAllConsumables() {
-//        displayPane.setText(consumableManager.getAllConsumablesString());
-//        displayPane.setCaretPosition(0);
         String consumablesString = curlCommand("GET", "/listAll");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
@@ -157,10 +156,9 @@ public class SwingUI implements ActionListener {
      * Displays all expired items on the central pane
      */
     private void viewExpired() {
-//        displayPane.setText(consumableManager.getExpiredString());
-//        displayPane.setCaretPosition(0);
         String consumablesString = curlCommand("GET", "/listExpired");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
@@ -169,10 +167,9 @@ public class SwingUI implements ActionListener {
      * Displays all unexpired items on the central pane
      */
     private void viewNotExpired() {
-//        displayPane.setText(consumableManager.getNotExpiredString());
-//        displayPane.setCaretPosition(0);
         String consumablesString = curlCommand("GET", "/listNonExpired");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
@@ -181,10 +178,9 @@ public class SwingUI implements ActionListener {
      * Displays all items expiring within seven days on the central pane
      */
     private void viewExpiringSevenDays() {
-//        displayPane.setText(consumableManager.getExpiringSevenDaysString());
-//        displayPane.setCaretPosition(0);
         String consumablesString = curlCommand("GET", "/listExpiringIn7Days");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
+        consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
         displayPane.setCaretPosition(0);
     }
@@ -253,7 +249,8 @@ public class SwingUI implements ActionListener {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        consumableManager.removeConsumable(toDelete-1);
+        //consumableManager.removeIdAt(toDelete-1);
+        curlWithBody("POST", "/removeConsumable", consumableManager.getIdAt(toDelete-1));
         updateView();
         JOptionPane.showMessageDialog(applicationFrame,
                 "Item #" + toDelete + " has been removed!",
@@ -289,6 +286,12 @@ public class SwingUI implements ActionListener {
 
     private String curlCommand(String method, String operation) {
         String command = "curl -X " + method + " localhost:8080" + operation;
+        return executeCommand(command);
+    }
+
+    private String curlWithBody(String method, String operation, String id) {
+        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + id + "\" localhost:8080" + operation;
+        System.out.println(command);
         return executeCommand(command);
     }
 

@@ -224,7 +224,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
             }
             Consumable newConsumable = ConsumableFactory.getInstance(isFood, name, notes, price, weightOrVolume, expDate);
             curlWithBody("POST", "/addConsumable", newConsumable);
-            consumableManager.addConsumable(newConsumable);
+            //consumableManager.addConsumable(newConsumable);
             dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,

@@ -56,6 +56,10 @@ public class ConsumableManager {
         return consumableList;
     }
 
+    public void setConsumableList(ArrayList<Consumable> consumableList) {
+        this.consumableList = consumableList;
+    }
+
     /**
      * Returns the size of the underlying Consumable list
      * @return the size as an integer
@@ -70,6 +74,32 @@ public class ConsumableManager {
      */
     public void removeConsumable(int index) {
         consumableList.remove(index);
+    }
+
+    public void removeByUUID(String uuid) {
+        for (Consumable consumable : consumableList) {
+            if (uuid == consumable.getId()) {
+                consumableList.remove(consumable);
+            }
+        }
+    }
+
+    public void removeIdAt(int index) {
+        String uuid = consumableList.get(index).getId();
+        Consumable toRemove = null;
+        for (Consumable consumable : consumableList) {
+            if (uuid == consumable.getId()) {
+                toRemove = consumable;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            consumableList.remove(toRemove);
+        }
+    }
+
+    public String getIdAt(int index) {
+        return consumableList.get(index).getId();
     }
 
     /**
