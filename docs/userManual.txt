@@ -20,7 +20,7 @@ OPERATION 2: ADD A NEW ITEM
     For the previous two fields, the system ensures numerical input.
     The date field prompts the user to pick a date from a calendar, with times in 30-minute intervals.
     Upon pressing the "OK" button, the input is validated, and the user will be informed if there are any errors.
-    If successful, the item is added to the list, and the dialog closes. The view is then updated in the main menu.
+    If successful, the item is sent to the server, and the dialog closes. The view is then updated in the main menu.
     This process can be cancelled at any time, either with the X button or the Cancel button.
 
 OPERATION 3: REMOVE AN ITEM
@@ -28,7 +28,7 @@ OPERATION 3: REMOVE AN ITEM
     This opens a small Dialog which asks the user for the index of the item to delete.
     If there are no items, the user will be notified and the operation halted.
     If the value given is out of range or non-numerical, the user will be informed and the process will end.
-    If a valid index is given, the associated Consumable will be removed from the list, and the view updated.
+    If a valid index is given, the associated Consumable will be removed from the server, and the view updated.
 
 OPERATION 4: LIST EXPIRED ITEMS
     Expired items are listed in the central display pane.
@@ -47,4 +47,4 @@ OPERATION 6: LIST ITEMS EXPIRING IN 7 DAYS
 
 OPERATION 7: EXIT
     The system can be terminated with the X button at the top-right of the window.
-    This will automatically save the Consumable list to data.json before closing the window.
+    This will automatically trigger the server's save operation to data.json before closing the window.
