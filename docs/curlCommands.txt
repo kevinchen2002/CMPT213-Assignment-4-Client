@@ -1,0 +1,64 @@
+CURL COMMANDS
+CMPT 213 Fall 2021 - Assignment 4
+Professor: Victor Cheung
+Student: Kai Feng (Kevin) Chen
+
+GET /ping
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/ping
+    A status message "Server is up!" is returned.
+
+POST /addItem
+    Due to the design of my system, there is no need to distinguish Food and Drink.
+    My serialization knows how to handle both, and the type is expressed in a field of a Consumable.
+    The body represents one serialized Consumable item.
+    This can be performed as follows, with words enclosed in [] indicating that some user input should be here:
+        curl -i -H "Content-Type: application/json" -X POST -d "{\"[weight/volume]\":[double],\"name\":\"[String]\",\"notes\":\"[String]\",\"price\":[double],\"expDate\":\"2021-11-03T01:30[YYYY-MM-DDTHH:MM]\",\"daysUntilExp\":[int],\"isExpired\":[boolean],\"type\":\"[food/drink]\",\"uuid\":\"[String]\"}" localhost:8080/addItem
+
+    Note the following:
+        -if "type" is "food", then the first field should be "weight."
+        =if "type" is "drink", then the first field should be "volume".
+        -the name should not be empty.
+        -numerical values other than "daysUntilExp" should be non-negative.
+        -the time is represented in 24-hour time, for example, 23:30.
+        -the "uuid" is automatically generated in the constructor; check data.json to find the id of any item.
+
+    This command was not intended for manual use, since the object is serialized by the client.
+    Check all fields carefully.
+
+POST /removeItem
+    The body represents the id of an item to be removed.
+    This can be performed as follows:
+        curl -i -H "Content-Type: application/json" -X POST -d "[String]" localhost:8080/removeConsumable
+
+    The id is automatically generated in the constructor; check data.json to find the id of any item.
+
+GET /listAll
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/listAll
+    A serialized list of all items is returned.
+
+GET /listExpired
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/listExpired
+    A serialized list of all expired items is returned.
+
+GET /listNonExpired
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/listNonExpired
+    A serialized list of all non-expired items is returned.
+
+GET /listExpiringIn7Days
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/listExpiringIn7Days
+    A serialized list of all items expiring within seven days is returned.
+
+GET /load
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/load
+    This triggers the load operation; data.json is deserialized and loaded into the server.
+
+GET /exit
+    This can be performed as follows:
+        curl -i -X GET localhost:8080/exit
+    This triggers the save operation; the item list is serialized and saved into data.json.
