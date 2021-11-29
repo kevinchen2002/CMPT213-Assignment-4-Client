@@ -35,6 +35,7 @@ public class SwingUI implements ActionListener {
      * Sets up and displays the main menu
      */
     public void displayMenu() {
+        pingServer();
         curlGetCommand("/load");
         applicationFrame = new JFrame("Consumable Tracker");
         applicationFrame.setSize(800, 800);
@@ -324,10 +325,18 @@ public class SwingUI implements ActionListener {
      * @param is an InputStream object
      * @return the string as read from the terminal
      */
-    public String getStringFromInputStream(InputStream is) {
+    private String getStringFromInputStream(InputStream is) {
         return new BufferedReader(
                 new InputStreamReader(is, StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining("\n"));
+    }
+
+    private void pingServer() {
+        String pingResult = curlGetCommand("/ping");
+        if (!pingResult.equals("System is up!")) {
+            System.out.println("ERROR - could not establish connection with server");
+            System.exit(0);
+        }
     }
 }

@@ -1,0 +1,50 @@
+USER MANUAL
+CMPT 213 Fall 2021 - Assignment 4
+Professor: Victor Cheung
+Student: Kai Feng (Kevin) Chen
+
+OPERATION 1: LIST ALL ITEMS
+    Upon launch, all items are listed in the central display pane.
+    This operation can be performed by clicking the associated "All" button at the top of the window.
+    This view will be updated upon addition or removal of any item.
+
+OPERATION 2: ADD A NEW ITEM
+    This operation can be initiated with the "Add" button on the bottom of the window.
+    This then opens a new Dialog which prompts the user for six things.
+    The drop-down asks the user to pick whether the new item is a Food or Drink.
+    The name field asks the user to enter a name, which cannot be empty.
+    The notes field asks the user to enter any relevant notes, with no restrictions.
+    The price field asks the user to enter the price of the item, which cannot be below 0.
+    The next field is weight or volume depending on the content of the aforementioned drop-down selection.
+    The user is asked for weight/volume, which also cannot be below 0.
+    For the previous two fields, the system ensures numerical input.
+    The date field prompts the user to pick a date from a calendar, with times in 30-minute intervals.
+    Upon pressing the "OK" button, the input is validated, and the user will be informed if there are any errors.
+    If successful, the item is added to the list, and the dialog closes. The view is then updated in the main menu.
+    This process can be cancelled at any time, either with the X button or the Cancel button.
+
+OPERATION 3: REMOVE AN ITEM
+    This operation can be initiated with the "Remove" button on the bottom of the window.
+    This opens a small Dialog which asks the user for the index of the item to delete.
+    If there are no items, the user will be notified and the operation halted.
+    If the value given is out of range or non-numerical, the user will be informed and the process will end.
+    If a valid index is given, the associated Consumable will be removed from the list, and the view updated.
+
+OPERATION 4: LIST EXPIRED ITEMS
+    Expired items are listed in the central display pane.
+    This operation can be performed by clicking the associated "Expired" button at the top of the window.
+    This view will be updated upon addition or removal of any item.
+
+OPERATION 5: LIST ITEMS THAT ARE NOT EXPIRED
+    Unexpired items are listed in the central display pane.
+    This operation can be performed by clicking the associated "Not Expired" button at the top of the window.
+    This view will be updated upon addition or removal of any item.
+
+OPERATION 6: LIST ITEMS EXPIRING IN 7 DAYS
+    Items expiring within 7 days are listed in the central display pane.
+    This operation can be performed by clicking the associated "Expiring in 7 Days" button at the top of the window.
+    This view will be updated upon addition or removal of any item.
+
+OPERATION 7: EXIT
+    The system can be terminated with the X button at the top-right of the window.
+    This will automatically save the Consumable list to data.json before closing the window.
