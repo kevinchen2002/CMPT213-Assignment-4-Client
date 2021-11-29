@@ -26,6 +26,10 @@ public class Consumable implements Comparable<Consumable> {
         this.uuid = UUID.randomUUID().toString();
     }
 
+    /**
+     * Getter for the id of a Consumable
+     * @return the id
+     */
     public String getId() {
         return uuid;
     }

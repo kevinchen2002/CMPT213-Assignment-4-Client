@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
- * ConsumableManager handles operations in regard to the Consumable list.
- * It uses a Singleton to distribute the same instance across the main UI and the dialog.
+ * ConsumableManager stores the current display list, as received by the web server
+ * It also includes static utility functions to prepare data to be sent to the web server
  */
 public class ConsumableManager {
     private ArrayList<Consumable> consumableList = new ArrayList<>();
@@ -34,6 +34,10 @@ public class ConsumableManager {
         return instance;
     }
 
+    /**
+     * Sets the consumable list to the one requested by the web server
+     * @param consumableList the list given by the web server
+     */
     public void setConsumableList(ArrayList<Consumable> consumableList) {
         this.consumableList = consumableList;
     }
@@ -46,10 +50,20 @@ public class ConsumableManager {
         return consumableList.size();
     }
 
+    /**
+     * Gets the id of an item at a certain index of the list
+     * @param index the index of the item
+     * @return the id of the item
+     */
     public String getIdAt(int index) {
         return consumableList.get(index).getId();
     }
 
+    /**
+     * Turns the list of Consumables into a string to be shown in the main display pane
+     * @param list the list given by the web server
+     * @return a string to be displayed, containing all items
+     */
     public static String listToString(ArrayList<Consumable> list) {
         if (list.isEmpty()) {
             return "There are no consumable items!";
@@ -89,10 +103,20 @@ public class ConsumableManager {
                 }
             }).registerTypeAdapterFactory(runTimeTypeAdapterFactory).create();
 
+    /**
+     * Serializes a single consumable to be sent to the web server
+     * @param consumable a single consumable to be serialized
+     * @return the string representing a consumable
+     */
     public static String serializeConsumable(Consumable consumable) {
         return myGson.toJson(consumable);
     }
 
+    /**
+     * Deserializes a consumable list received by the web server
+     * @param gsonString the serialized string in json format
+     * @return the list of consumables recieved from the server
+     */
     public static ArrayList<Consumable> deserializeConsumableList(String gsonString) {
         ArrayList<Consumable> list = myGson.fromJson(gsonString, new TypeToken<ArrayList<Consumable>>() {}.getType());
         for (Consumable consumable : list) {

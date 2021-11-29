@@ -17,7 +17,7 @@ import java.util.Objects;
 
 /**
  * Creates and displays a custom dialog which prompts the users to enter information to add a Consumable
- * Once "OK" is pressed, the new item is added to the manager, and the dialog closes
+ * Once "OK" is pressed, the new item is added to the server, and the dialog closes
  * This can be cancelled at any time
  * http://www2.hawaii.edu/~takebaya/ics111/jdialog/jdialog.html was used as a reference
  */
@@ -311,6 +311,10 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
         expDate = dateTimePicker.getDateTimePermissive();
     }
 
+    /**
+     * Serializes and sends a consumable to the web server to be added to the list
+     * @param consumable the consumable to be added
+     */
     private void curlAddConsumable(Consumable consumable) {
         String consumableString = ConsumableManager.serializeConsumable(consumable);
         consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
@@ -318,6 +322,10 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
         executeCommand(command);
     }
 
+    /**
+     * Executes a curl command
+     * @param command the command to be executed
+     */
     private void executeCommand(String command) {
         try {
             Runtime.getRuntime().exec(command);

@@ -5,7 +5,7 @@ import ca.cmpt213.a4.client.view.SwingUI;
 import javax.swing.*;
 
 /**
- * The ConsumableTracker class is the entry point of the system.
+ * The ConsumableTracker class is the entry point of the client system.
  * Its only responsibility is to call main to initiate the system.
  */
 public class ConsumableTracker {

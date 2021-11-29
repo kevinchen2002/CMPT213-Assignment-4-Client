@@ -16,10 +16,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * The main UI class
+ * The main UI class of the client
  * The user selects which of 4 lists to view with the top buttons
- * Display of one of 4 lists takes place on the central pane.
- * The user can add or remove Consumables with the bottom buttons.
+ * Display of one of 4 lists takes place on the central pane
+ * The user can add or remove Consumables with the bottom buttons
+ * Data is received from the web server
  */
 public class SwingUI implements ActionListener {
     JFrame applicationFrame;
@@ -258,40 +259,51 @@ public class SwingUI implements ActionListener {
 
     /**
      * Defines behaviour when a button is pressed
-     * The first four buttons update the view, while the latter two modify the list
+     * The first four buttons change the current view, while the latter two modify the list
      * @param e the action being received
      */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (Objects.equals(e.getActionCommand(), "All")) {
             DISPLAY_OPTION = 0;
-            updateView();
         } else if (Objects.equals(e.getActionCommand(), "Expired")) {
             DISPLAY_OPTION = 1;
-            updateView();
         } else if (Objects.equals(e.getActionCommand(), "Not Expired")) {
             DISPLAY_OPTION = 2;
-            updateView();
         } else if (Objects.equals(e.getActionCommand(), "Expiring in 7 Days")) {
             DISPLAY_OPTION = 3;
-            updateView();
         } else if (Objects.equals(e.getActionCommand(), "Add")) {
             addConsumable();
         } else if (Objects.equals(e.getActionCommand(), "Remove")) {
             removeConsumable();
         }
+        updateView();
     }
 
+    /**
+     * Executes a curl GET command and returns the result
+     * @param operation the operation to be performed
+     * @return the result if there is one, which is the serialized list of consumables
+     */
     private String curlGetCommand(String operation) {
         String command = "curl -X " + "GET" + " localhost:8080" + operation;
         return executeCommand(command);
     }
 
+    /**
+     * Sends a request to the server to delete a consumable, with the id as a reference
+     * @param id the id of the item to be removed
+     */
     private void curlRemoveConsumable(String id) {
         String command = "curl -i -H \"Content-Type: application/json\" -X " + "POST" + " -d \"" + id + "\" localhost:8080" + "/removeItem";
         executeCommand(command);
     }
 
+    /**
+     * Executes a curl command
+     * @param command the command to be executed
+     * @return the result if there is one, which is the serialized list of consumables
+     */
     private String executeCommand(String command) {
         Process process = null;
         try {
@@ -306,7 +318,12 @@ public class SwingUI implements ActionListener {
         return getStringFromInputStream(inputStream);
     }
 
-    //Used https://www.baeldung.com/convert-input-stream-to-string as reference
+    /**
+     * Gets the response of the web server from the terminal and returns it as a string
+     * Used https://www.baeldung.com/convert-input-stream-to-string as reference
+     * @param is an InputStream object
+     * @return the string as read from the terminal
+     */
     public String getStringFromInputStream(InputStream is) {
         return new BufferedReader(
                 new InputStreamReader(is, StandardCharsets.UTF_8))
