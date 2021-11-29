@@ -34,8 +34,8 @@ public class SwingUI implements ActionListener {
      * Sets up and displays the main menu
      */
     public void displayMenu() {
-        consumableManager.loadFile();
-
+        //consumableManager.loadFile();
+        curlCommand("GET", "/load");
         applicationFrame = new JFrame("Consumable Tracker");
         applicationFrame.setSize(800, 800);
         applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -43,7 +43,8 @@ public class SwingUI implements ActionListener {
         applicationFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                consumableManager.writeFile();
+                //consumableManager.writeFile();
+                curlCommand("GET", "/exit");
                 super.windowClosing(e);
                 applicationFrame.dispose();
             }
