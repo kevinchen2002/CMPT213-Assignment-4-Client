@@ -289,7 +289,6 @@ public class SwingUI implements ActionListener {
 
     private void curlRemoveConsumable(String id) {
         String command = "curl -i -H \"Content-Type: application/json\" -X " + "POST" + " -d \"" + id + "\" localhost:8080" + "/removeItem";
-        System.out.println(command);
         executeCommand(command);
     }
 

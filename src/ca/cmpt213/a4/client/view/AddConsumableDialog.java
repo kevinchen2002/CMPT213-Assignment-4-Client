@@ -315,7 +315,6 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
         String consumableString = ConsumableManager.serializeConsumable(consumable);
         consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
         String command = "curl -i -H \"Content-Type: application/json\" -X " + "POST" + " -d \"" + consumableString + "\" localhost:8080" + "/addItem";
-        System.out.println(command);
         executeCommand(command);
     }
 
