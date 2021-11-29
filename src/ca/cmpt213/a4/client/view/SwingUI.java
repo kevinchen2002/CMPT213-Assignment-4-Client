@@ -34,8 +34,7 @@ public class SwingUI implements ActionListener {
      * Sets up and displays the main menu
      */
     public void displayMenu() {
-        //consumableManager.loadFile();
-        curlCommand("GET", "/load");
+        curlGetCommand("/load");
         applicationFrame = new JFrame("Consumable Tracker");
         applicationFrame.setSize(800, 800);
         applicationFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -43,8 +42,7 @@ public class SwingUI implements ActionListener {
         applicationFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //consumableManager.writeFile();
-                curlCommand("GET", "/exit");
+                curlGetCommand("/exit");
                 super.windowClosing(e);
                 applicationFrame.dispose();
             }
@@ -146,7 +144,7 @@ public class SwingUI implements ActionListener {
      * Displays all items on the central pane
      */
     private void viewAllConsumables() {
-        String consumablesString = curlCommand("GET", "/listAll");
+        String consumablesString = curlGetCommand("/listAll");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
         consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
@@ -157,7 +155,7 @@ public class SwingUI implements ActionListener {
      * Displays all expired items on the central pane
      */
     private void viewExpired() {
-        String consumablesString = curlCommand("GET", "/listExpired");
+        String consumablesString = curlGetCommand("/listExpired");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
         consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
@@ -168,7 +166,7 @@ public class SwingUI implements ActionListener {
      * Displays all unexpired items on the central pane
      */
     private void viewNotExpired() {
-        String consumablesString = curlCommand("GET", "/listNonExpired");
+        String consumablesString = curlGetCommand("/listNonExpired");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
         consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
@@ -179,7 +177,7 @@ public class SwingUI implements ActionListener {
      * Displays all items expiring within seven days on the central pane
      */
     private void viewExpiringSevenDays() {
-        String consumablesString = curlCommand("GET", "/listExpiringIn7Days");
+        String consumablesString = curlGetCommand("/listExpiringIn7Days");
         ArrayList<Consumable> consumablesList = ConsumableManager.deserializeConsumableList(consumablesString);
         consumableManager.setConsumableList(consumablesList);
         displayPane.setText(ConsumableManager.listToString(consumablesList));
@@ -250,8 +248,7 @@ public class SwingUI implements ActionListener {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        //consumableManager.removeIdAt(toDelete-1);
-        curlWithBody("POST", "/removeConsumable", consumableManager.getIdAt(toDelete-1));
+        curlRemoveConsumable(consumableManager.getIdAt(toDelete-1));
         updateView();
         JOptionPane.showMessageDialog(applicationFrame,
                 "Item #" + toDelete + " has been removed!",
@@ -285,15 +282,15 @@ public class SwingUI implements ActionListener {
         }
     }
 
-    private String curlCommand(String method, String operation) {
-        String command = "curl -X " + method + " localhost:8080" + operation;
+    private String curlGetCommand(String operation) {
+        String command = "curl -X " + "GET" + " localhost:8080" + operation;
         return executeCommand(command);
     }
 
-    private String curlWithBody(String method, String operation, String id) {
-        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + id + "\" localhost:8080" + operation;
+    private void curlRemoveConsumable(String id) {
+        String command = "curl -i -H \"Content-Type: application/json\" -X " + "POST" + " -d \"" + id + "\" localhost:8080" + "/removeItem";
         System.out.println(command);
-        return executeCommand(command);
+        executeCommand(command);
     }
 
     private String executeCommand(String command) {
@@ -303,7 +300,10 @@ public class SwingUI implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        InputStream inputStream = process.getInputStream();
+        InputStream inputStream = null;
+        if (process != null) {
+            inputStream = process.getInputStream();
+        }
         return getStringFromInputStream(inputStream);
     }
 

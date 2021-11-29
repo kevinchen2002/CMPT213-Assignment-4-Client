@@ -11,14 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Creates and displays a custom dialog which prompts the users to enter information to add a Consumable
@@ -30,7 +25,6 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
     private boolean isFood = true;
     private LocalDateTime expDate;
     private DateTimePicker dateTimePicker;
-    private final ConsumableManager consumableManager = ConsumableManager.getInstance();
 
     private final JComboBox<String> consumableTypeSelect;
     private JLabel weightOrVolumeLabel;
@@ -223,8 +217,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
                 return;
             }
             Consumable newConsumable = ConsumableFactory.getInstance(isFood, name, notes, price, weightOrVolume, expDate);
-            curlWithBody("POST", "/addConsumable", newConsumable);
-            //consumableManager.addConsumable(newConsumable);
+            curlAddConsumable(newConsumable);
             dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
@@ -290,7 +283,7 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
 
     /**
      * Defines behaviour when Food/Drink is selected or a button is pressed
-     * @param e the action being recieved
+     * @param e the action being received
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -318,30 +311,19 @@ public class AddConsumableDialog extends JDialog implements ActionListener, Date
         expDate = dateTimePicker.getDateTimePermissive();
     }
 
-    private String curlWithBody(String method, String operation, Consumable consumable) {
+    private void curlAddConsumable(Consumable consumable) {
         String consumableString = ConsumableManager.serializeConsumable(consumable);
         consumableString = consumableString.replaceAll("\"", "\\\\"+"\"");
-        String command = "curl -i -H \"Content-Type: application/json\" -X " + method + " -d \"" + consumableString + "\" localhost:8080" + operation;
+        String command = "curl -i -H \"Content-Type: application/json\" -X " + "POST" + " -d \"" + consumableString + "\" localhost:8080" + "/addItem";
         System.out.println(command);
-        return executeCommand(command);
+        executeCommand(command);
     }
 
-    private String executeCommand(String command) {
-        Process process = null;
+    private void executeCommand(String command) {
         try {
-            process = Runtime.getRuntime().exec(command);
+            Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        InputStream inputStream = process.getInputStream();
-        return getStringFromInputStream(inputStream);
-    }
-
-    //Used https://www.baeldung.com/convert-input-stream-to-string as reference
-    public String getStringFromInputStream(InputStream is) {
-        return new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
     }
 }
